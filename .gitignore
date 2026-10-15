@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*~
+.venv/
+venv/
+.idea/
+.DS_Store
+report.pdf
+report_assets/
+common_keypoints.png
+images/*.png
