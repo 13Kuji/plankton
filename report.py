@@ -36,14 +36,23 @@ OUT_DIR = os.path.join(HERE, "report_assets")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ----------------------------- PDF-шрифты (кириллица) ------------------------
-_MPL_TTF = os.path.join(os.path.dirname(__file__), "..", ".venv", "lib",
-                        "python3.14", "site-packages", "matplotlib", "mpl-data",
-                        "fonts", "ttf")
-def _mp(path):
-    return os.path.join(_MPL_TTF, path)
+def _dejavu(style="Regular"):
+    """Путь к DejaVu-Sans TTF через matplotlib (поддерживает кириллицу)."""
+    import matplotlib.font_manager as fm
+    for f in fm.findSystemFonts():
+        fn = os.path.basename(f).lower()
+        if fn == f"dejavusans-{style.lower()}.ttf":
+            return f
+    # запасной путь внутри самого matplotlib
+    f = os.path.join(os.path.dirname(matplotlib.__file__), "mpl-data",
+                     "fonts", "ttf", f"DejaVuSans-{style}.ttf")
+    if os.path.exists(f):
+        return f
+    return os.path.join(os.path.dirname(matplotlib.__file__), "mpl-data",
+                        "fonts", "ttf", "DejaVuSans.ttf")
 
-pdfmetrics.registerFont(TTFont("DejaVu", _mp("DejaVuSans.ttf")))
-pdfmetrics.registerFont(TTFont("DejaVu-Bold", _mp("DejaVuSans-Bold.ttf")))
+pdfmetrics.registerFont(TTFont("DejaVu", _dejavu("Regular")))
+pdfmetrics.registerFont(TTFont("DejaVu-Bold", _dejavu("Bold")))
 
 SS = getSampleStyleSheet()
 H1 = ParagraphStyle("H1b", parent=SS["Title"], fontName="DejaVu-Bold",
